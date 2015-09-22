@@ -25,13 +25,38 @@
     [Parse enableLocalDatastore];
     
     // Initialize Parse.
-    [Parse setApplicationId:@"myj2jUXnKKep3ftHfVdEHSixLhzKaooOczbSEvIl"
-                  clientKey:@"uCoLas6xrZGmza1ZvuhxdcaFeLYmeN9MhuapUd9X"];
+    [Parse setApplicationId:@"SVpXOiqE58vlZ4skaD9pbcqeUfc00HxlnQXUV726"
+                  clientKey:@"oov8ZdthRrXUZdvVRUyxsl06wefKFa1plp2VMiK0"];
     
     // [Optional] Track statistics around application opens.
     [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
+    // Parse Push Notification Stuff
+    UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
+                                                    UIUserNotificationTypeBadge |
+                                                    UIUserNotificationTypeSound);
+    
+    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes categories:nil];
+    
+    [application registerUserNotificationSettings:settings];
+    
+    [application registerForRemoteNotifications];
+    
     return YES;
+}
+
+// Parse Push Notification Stuff
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    // Store the deviceToken in the current installation and save it to Parse.
+    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+    [currentInstallation setDeviceTokenFromData:deviceToken];
+    currentInstallation.channels = @[ @"global" ];
+    [currentInstallation saveInBackground];
+}
+
+// Parse Push Notification Stuff
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    [PFPush handlePush:userInfo];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -55,5 +80,6 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
 
 @end
